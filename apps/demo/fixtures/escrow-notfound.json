@@ -1,0 +1,13 @@
+{
+  "case": "notfound",
+  "status": "REFUNDED",
+  "amountUsdc": "0.01",
+  "proof": null,
+  "hashes": {
+    "payment": "0x272be023df14efab5044f2d115a7872ecdcba0b4df7be586b073735857196ab7",
+    "refund": "0x4b84cfde52886b58ca1e4ce8ebfb5a04f3aaa19e825aadcccefdf14c182108dc"
+  },
+  "fallbackPerson": null,
+  "network": "base-sepolia-fork",
+  "explorerLinkable": false
+}

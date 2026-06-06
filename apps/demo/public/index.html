@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>humanbase — trustless data for AI agents</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">◆</span> human<span class="accent">base</span>
+      <span class="tagline">trustless pay-per-call data for AI agents</span>
+    </div>
+    <div class="net"><span class="dot"></span> Base Sepolia · x402r escrow</div>
+  </header>
+
+  <section class="intro">
+    <p>An AI agent pays for a contact. Payment is held in <b>x402r escrow</b> and only released when
+      humanbase proves with a <b>zkTLS proof</b> it delivered real data. <b>No record → no proof → automatic refund.</b></p>
+  </section>
+
+  <main class="grid">
+    <!-- PANEL A: data exists -->
+    <div class="panel" id="panel-found" data-case="found">
+      <div class="panel-head">
+        <h2>Request A · data exists</h2>
+        <code class="query">enrich · Tim Zheng @ apollo.io</code>
+      </div>
+      <button class="run" data-run="found">▶ Run agent request</button>
+      <ol class="trace" id="trace-found"></ol>
+      <div class="result" id="result-found"></div>
+    </div>
+
+    <!-- PANEL B: no record -->
+    <div class="panel" id="panel-notfound" data-case="notfound">
+      <div class="panel-head">
+        <h2>Request B · no record</h2>
+        <code class="query">enrich · unknown @ no-such-company</code>
+      </div>
+      <button class="run" data-run="notfound">▶ Run agent request</button>
+      <ol class="trace" id="trace-notfound"></ol>
+      <div class="result" id="result-notfound"></div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <span>x402</span><span>x402r auth-capture escrow</span><span>Reclaim zkTLS</span><span>Apollo data</span><span>Base</span>
+  </footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>

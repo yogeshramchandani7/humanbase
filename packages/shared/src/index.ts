@@ -131,3 +131,25 @@ export const OrganizationEnrichRequest = z.object({
   domain: z.string(),
 });
 export type OrganizationEnrichRequest = z.infer<typeof OrganizationEnrichRequest>;
+
+// ---------------------------------------------------------------------------
+// Delivery provenance (optional zkTLS attestation attached to enrich responses)
+// ---------------------------------------------------------------------------
+
+/**
+ * A Reclaim (zkTLS) proof that the merchant fetched good data from Apollo for a request.
+ * Attached to /people/enrich responses as `provenance` when ATTEST_ENABLED is on.
+ *
+ * Trust scope: attests the merchant -> Apollo leg only, not that the buyer received the data.
+ */
+export const Provenance = z.object({
+  /** Query-binding marker committed into the attested request. */
+  marker: z.string(),
+  /** Raw Reclaim proof (opaque; verify with @reclaimprotocol/js-sdk or on-chain). */
+  proof: z.unknown(),
+  /** Proof reshaped for on-chain verification via transformForOnchain(). */
+  onchain: z.unknown(),
+  /** The canonical Reclaim verifier this proof checks against. */
+  verifier: z.object({ network: z.string(), address: z.string() }),
+});
+export type Provenance = z.infer<typeof Provenance>;
