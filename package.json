@@ -1,0 +1,19 @@
+{
+  "name": "humanbase",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Whitelabeled human/B2B contact data sold to AI agents over x402 (escrow-backed via x402r)",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w apps/merchant",
+    "start": "npm run start -w apps/merchant",
+    "typecheck": "npm run typecheck -w apps/merchant && npm run typecheck -w apps/agent",
+    "agent": "npm run start -w apps/agent"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
