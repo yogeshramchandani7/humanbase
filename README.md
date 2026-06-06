@@ -104,11 +104,17 @@ context (`contextMessage`) and is verifiable off-chain (`@reclaimprotocol/js-sdk
 (`packages/contracts/ReclaimDeliveryVerifier`, BUSL-1.1) against the canonical Reclaim verifier
 on Base Sepolia.
 
+On-chain, `packages/contracts/ReclaimDeliveryCondition` (BUSL-1.1) wraps that verifier as an
+x402r [`ICondition`](packages/contracts/src/x402r/ICondition.sol): drop it into an operator's
+`CAPTURE_PRE_ACTION_CONDITION` slot and **escrowed USDC only releases to the merchant when a
+valid delivery proof, bound to that payment, is supplied** — no proof, no payout. See
+`packages/contracts/README.md`.
+
 > **Trust scope (intentional v1):** this proves the **merchant → Apollo** leg — that the merchant
 > *fetched* real data — not that the buyer *received* it. Only the buyer can attest its own
 > session, so a merchant could fetch good data, mint a valid proof, and still serve garbage. The
 > trustless design flips this to buyer-side prove-bad-delivery gating a refund on an x402r escrow;
-> the verifier is written as a non-reverting view so it can lift into an x402r `ICondition` later.
+> `ReclaimDeliveryCondition` is the seam — the same operator slot later holds the inverse condition.
 > Also note: while enabled, an attested enrich currently spends a second Apollo credit.
 
 ## Licensing
