@@ -17,6 +17,10 @@
     "viem": "^2.21.26",
     "zod": "^3.24.2"
   },
+  "optionalDependencies": {
+    "@reclaimprotocol/zk-fetch": "^1.0.0",
+    "@reclaimprotocol/js-sdk": "^5.5.0"
+  },
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/node": "^22.10.0",

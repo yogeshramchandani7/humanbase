@@ -93,3 +93,26 @@ Privy wallet → 402 → EIP-3009 → facilitator settle → real Apollo data. O
 | `POST /api/v1/organizations/enrich` | $0.03 | full company record |
 
 Free: `GET /api/health`, `GET /.well-known/x402`, `GET /openapi.json`.
+
+## Delivery attestation (zkTLS, optional)
+
+`/people/enrich` can attach a **Reclaim zkTLS proof** that the data came from Apollo, returned
+as a `provenance` field next to `person`. It's off by default — enable with `ATTEST_ENABLED=true`
+plus a Reclaim `RECLAIM_APP_ID`/`RECLAIM_APP_SECRET` and the optional
+`@reclaimprotocol/zk-fetch` + `js-sdk` packages. The proof is bound to the query via the proof
+context (`contextMessage`) and is verifiable off-chain (`@reclaimprotocol/js-sdk`) or on-chain
+(`packages/contracts/ReclaimDeliveryVerifier`, BUSL-1.1) against the canonical Reclaim verifier
+on Base Sepolia.
+
+> **Trust scope (intentional v1):** this proves the **merchant → Apollo** leg — that the merchant
+> *fetched* real data — not that the buyer *received* it. Only the buyer can attest its own
+> session, so a merchant could fetch good data, mint a valid proof, and still serve garbage. The
+> trustless design flips this to buyer-side prove-bad-delivery gating a refund on an x402r escrow;
+> the verifier is written as a non-reverting view so it can lift into an x402r `ICondition` later.
+> Also note: while enabled, an attested enrich currently spends a second Apollo credit.
+
+## Licensing
+
+MIT for the whole repo **except** `packages/contracts/`, which is BUSL-1.1 (same terms/licensor
+as [`BackTrackCo/x402r-contracts`](https://github.com/BackTrackCo/x402r-contracts)). See
+`/LICENSE` and `packages/contracts/LICENSE`.

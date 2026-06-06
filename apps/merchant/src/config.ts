@@ -21,4 +21,10 @@ export const config = {
   merchantAddress: process.env.MERCHANT_ADDRESS as `0x${string}` | undefined,
   network: process.env.NETWORK ?? "base-sepolia",
   facilitatorUrl: process.env.FACILITATOR_URL,
+  // zkTLS delivery attestation (optional). Proves the merchant -> Apollo leg.
+  attest: {
+    enabled: (process.env.ATTEST_ENABLED ?? "false").toLowerCase() === "true",
+    appId: process.env.RECLAIM_APP_ID,
+    appSecret: process.env.RECLAIM_APP_SECRET,
+  },
 };

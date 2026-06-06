@@ -7,6 +7,7 @@ import {
   OrganizationEnrichRequest,
 } from "@humanbase/shared";
 import { getProvider } from "./providers/index";
+import { attestApolloEnrich } from "./attestation/reclaim";
 import { asyncHandler, parseBody, HttpError } from "./http";
 
 export const apiRouter = Router();
@@ -33,7 +34,9 @@ apiRouter.post(
     const body = parseBody(req.body, PersonEnrichRequest);
     const person = await getProvider().enrichPerson(body);
     if (!person) throw new HttpError(404, "No matching person found");
-    res.json({ person });
+    // Best-effort zkTLS provenance (Apollo-sourced data only; null when disabled).
+    const provenance = person.source === "apollo" ? await attestApolloEnrich(body) : null;
+    res.json(provenance ? { person, provenance } : { person });
   }),
 );
 
