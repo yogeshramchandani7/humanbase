@@ -24,6 +24,7 @@ discoveryRouter.get("/.well-known/x402", (_req, res) => {
       price: e.price,
       summary: e.summary,
       description: e.description,
+      tags: e.discovery.tags,
     })),
   });
 });
