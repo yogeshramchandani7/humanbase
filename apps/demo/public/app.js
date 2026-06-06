@@ -6,7 +6,7 @@ const isReal = (h) => typeof h === "string" && /^0x[0-9a-fA-F]{64}$/.test(h);
 
 function hashChip(label, hash, explorer, linkable) {
   if (!hash) return "";
-  const inner = `<span class="tag">${label}</span> ${short(hash)}`;
+  const inner = `<span class="tag">${label}</span> <span class="hx">${hash}</span>`; // full hash, never truncated
   if (linkable && isReal(hash)) return `<a class="hashchip" href="${explorer}${hash}" target="_blank" rel="noopener">${inner} ↗</a>`;
   return `<span class="hashchip" title="on-chain tx (Base Sepolia fork)">${inner}</span>`;
 }
@@ -47,7 +47,8 @@ function renderResult(d) {
           <div class="k">location</div><div class="v">${[p.city, p.state, p.country].filter(Boolean).join(", ") || "—"}</div>
         </div>
         <div class="proofline">🔐 zkTLS proof verified
-          <span class="vrf">· verifier ${short(d.proof?.verifier)} · id ${short(d.proof?.identifier)}</span>
+          <span class="vrf">verifier ${d.proof?.verifier}</span>
+          <span class="vrf">proof id ${d.proof?.identifier}</span>
         </div>
       </div>`;
   }

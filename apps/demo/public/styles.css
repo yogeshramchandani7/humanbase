@@ -50,9 +50,11 @@ body {
 .actor-AGENT { background: rgba(90,169,255,0.16); color: var(--blue); }
 .actor-HUMANBASE { background: rgba(46,204,113,0.16); color: var(--green); }
 .actor-X402R { background: rgba(245,185,66,0.16); color: var(--amber); }
-.hashchip { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11px; margin-top: 5px; background: #0a0e17; border: 1px solid var(--line); padding: 3px 8px; border-radius: 6px; color: var(--blue); text-decoration: none; }
+.hashchip { display: inline-block; font-family: var(--mono); font-size: 11px; margin-top: 5px; background: #0a0e17; border: 1px solid var(--line); padding: 4px 9px; border-radius: 6px; color: var(--blue); text-decoration: none; max-width: 100%; word-break: break-all; line-height: 1.6; }
 .hashchip:hover { border-color: #34507f; }
-.hashchip .tag { color: var(--muted); }
+.hashchip .tag { color: var(--muted); margin-right: 4px; }
+.hashchip .hx { color: var(--blue); }
+a.hashchip .hx { text-decoration: underline; }
 
 .result { margin-top: 16px; opacity: 0; transition: opacity 0.4s; }
 .result.show { opacity: 1; }
@@ -69,8 +71,8 @@ body {
 .card .rows { margin-top: 10px; display: grid; grid-template-columns: auto 1fr; gap: 5px 14px; font-size: 13px; }
 .card .rows .k { color: var(--muted); font-family: var(--mono); font-size: 11.5px; }
 .card .rows .v { font-family: var(--mono); font-size: 12.5px; }
-.proofline { margin-top: 11px; font-size: 12px; color: var(--green); display: flex; align-items: center; gap: 7px; }
-.proofline .vrf { font-family: var(--mono); color: var(--muted); }
+.proofline { margin-top: 11px; font-size: 12px; color: var(--green); display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
+.proofline .vrf { font-family: var(--mono); color: var(--muted); font-size: 11px; word-break: break-all; }
 .miss { margin-top: 12px; background: #0a0e17; border: 1px dashed var(--red-dim); border-radius: 12px; padding: 16px; color: var(--red); font-weight: 600; }
 .miss .sub { color: var(--muted); font-weight: 400; font-size: 13px; margin-top: 5px; }
 
