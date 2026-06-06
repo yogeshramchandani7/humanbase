@@ -11,7 +11,8 @@
     "dev": "npm run dev -w apps/merchant",
     "start": "npm run start -w apps/merchant",
     "typecheck": "npm run typecheck -w apps/merchant && npm run typecheck -w apps/agent",
-    "agent": "npm run start -w apps/agent"
+    "agent": "npm run start -w apps/agent",
+    "demo": "npm run start -w apps/demo"
   },
   "engines": {
     "node": ">=20"
