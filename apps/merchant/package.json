@@ -9,10 +9,12 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@coinbase/x402": "^2.1.0",
     "@humanbase/shared": "*",
     "@x402/core": "^2.14.0",
     "@x402/evm": "^2.14.0",
     "@x402/express": "^2.14.0",
+    "@x402/extensions": "^2.14.0",
     "express": "^4.21.2",
     "viem": "^2.21.26",
     "zod": "^3.24.2"

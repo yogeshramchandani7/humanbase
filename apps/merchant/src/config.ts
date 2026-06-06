@@ -11,6 +11,13 @@ for (const file of [".env.local", ".env"]) {
 // falling back to a single APOLLO_API_KEY if you only have one master key.
 const apolloMaster = process.env.APOLLO_API_KEY;
 
+// CDP API keys authenticate the Coinbase facilitator. When present, we route
+// settlement through the CDP facilitator so paid routes auto-list in the x402
+// Bazaar (and thus on agentic.market). Without them we fall back to the free
+// x402.org facilitator (no Bazaar cataloging).
+const cdpApiKeyId = process.env.CDP_API_KEY_ID;
+const cdpApiKeySecret = process.env.CDP_API_KEY_SECRET;
+
 export const config = {
   port: Number(process.env.PORT ?? 3100),
   dataProvider: (process.env.DATA_PROVIDER ?? "mock").toLowerCase(),
@@ -21,4 +28,14 @@ export const config = {
   merchantAddress: process.env.MERCHANT_ADDRESS as `0x${string}` | undefined,
   network: process.env.NETWORK ?? "base-sepolia",
   facilitatorUrl: process.env.FACILITATOR_URL,
+  // CDP / Bazaar
+  cdpApiKeyId,
+  cdpApiKeySecret,
+  useCdpFacilitator: Boolean(cdpApiKeyId && cdpApiKeySecret),
+  /**
+   * The canonical public origin of this merchant (e.g. the Railway URL), used as
+   * the resource URL the Bazaar catalogs. When unset, the resource is derived
+   * per-request from the incoming Host header.
+   */
+  publicUrl: process.env.PUBLIC_URL?.replace(/\/$/, ""),
 };

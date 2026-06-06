@@ -74,9 +74,33 @@ v2 specifics (in `src/x402.ts`):
   then `paymentMiddleware(routes, server)` with routes shaped `{accepts:{scheme,price,network,payTo}, description}`.
 - v2 returns the requirements in a base64 **`payment-required` response header** (the 402 body
   is `{}`) — don't expect them in the body.
-- Facilitator is `https://x402.org/facilitator` (the `@x402/express` README's
-  `facilitator.x402.org` does not resolve). It hard-fails on startup if unreachable.
+- **Facilitator is selected at runtime** (`buildFacilitator()` in `src/x402.ts`): if
+  `CDP_API_KEY_ID` + `CDP_API_KEY_SECRET` are set we use the **Coinbase CDP facilitator**
+  (required for Bazaar listing — see below); otherwise we fall back to the free
+  `https://x402.org/facilitator`. (The `@x402/express` README's `facilitator.x402.org` does not
+  resolve — don't use it.)
 - The paywall is gated behind `X402_ENABLED`; false → no-op passthrough so the API runs open in dev.
+
+### Discovery & the x402 Bazaar (agentic.market)
+We list humanbase on **agentic.market**, which is **Bazaar-fed** — there is no seller form. A
+route is cataloged the **first time it settles through the CDP facilitator** AND declares Bazaar
+discovery metadata. So two things are required together:
+
+1. **CDP facilitator** (above) — set the CDP keys.
+2. **Discovery metadata per route** (`src/x402.ts`): we `registerExtension(bazaarResourceServerExtension)`
+   on the resource server, and each route carries `serviceName`/`tags`/`mimeType` plus
+   `extensions: { ...declareDiscoveryExtension({ bodyType:"json", input, inputSchema, output }) }`.
+   The actual metadata (tags + request/response examples + JSON Schemas) lives in
+   `src/pricing.ts` under each endpoint's `discovery` field, keeping pricing the single source.
+
+**GOTCHA:** the v2 `HTTPFacilitatorClient` does **not** auto-read CDP env vars (the CDP
+seller-quickstart doc is wrong). CDP needs JWT auth, supplied via `@coinbase/x402`'s
+`createFacilitatorConfig(id, secret)` (builds `createAuthHeaders` for verify/settle/supported).
+We deliberately **omit** the permit2 / EIP-2612 gas-sponsoring extension from that doc — it
+changes the transfer method and would break the EIP-3009 Privy CLI buyer.
+
+Debug a live endpoint at `https://agentic.market/validate`. Extra deps for this:
+`@x402/extensions`, `@coinbase/x402` (both 2.x).
 
 ### `apps/agent` caveat
 `apps/agent` is a programmatic buyer (`x402-fetch` v1 + a Privy/local viem signer in
@@ -90,9 +114,34 @@ Env is loaded from `.env.local` then `.env` via Node's built-in `process.loadEnv
 each app's `config.ts` / `env.ts`). Both are git-ignored. Merchant keys: `DATA_PROVIDER`
 (`apollo`|`mock`), `APOLLO_API_KEY` (single key covers search + enrich; `ApolloProvider` also
 accepts split `APOLLO_SEARCH_API_KEY`/`APOLLO_ENRICH_API_KEY`), `X402_ENABLED`,
-`MERCHANT_ADDRESS` (USDC payTo), `NETWORK`, `FACILITATOR_URL`.
+`MERCHANT_ADDRESS` (USDC payTo), `NETWORK`, `FACILITATOR_URL`. For Bazaar listing also:
+`CDP_API_KEY_ID` + `CDP_API_KEY_SECRET` (CDP Secret API key from portal.cdp.coinbase.com →
+Secret API Keys), and `PUBLIC_URL` (the stable public origin, e.g. the Railway URL — used as the
+canonical resource URL the Bazaar catalogs; falls back to the request Host when unset).
 
 ## Deploy
 
-Express is **not Vercel-native** — deploy to Render/Railway/Fly. (`cloudflared` tunnels are for
-local testing only; the URL is ephemeral.)
+Express is **not Vercel-native** — deploy to **Railway** (chosen) / Render / Fly. (`cloudflared`
+tunnels are for local testing only; the URL is ephemeral.) Start command:
+`npm run start -w apps/merchant`. Set all merchant env on the host, including the CDP keys and
+`PUBLIC_URL`.
+
+## Status & roadmap
+
+**Done:** M1–M5 (merchant + Apollo proxy + x402 v2 paywall + Privy CLI paid loop verified
+on-chain + discovery manifest/OpenAPI). Renamed to humanbase, pushed to the private GitHub repo.
+**x402 Bazaar / agentic.market wiring is code-complete** (CDP facilitator + discovery metadata)
+and verified locally (typecheck clean; boots against CDP with no auth error; 402 is x402Version 2
+with `serviceName`, `tags`, and the bazaar extension embedded).
+
+**Next (to actually appear on agentic.market):**
+1. (Recommended first) re-run the Privy CLI paid loop against the **CDP** facilitator via a
+   cloudflared tunnel to confirm the swap didn't break the buyer (~$0.01 testnet USDC).
+2. **Deploy to Railway** with a stable HTTPS URL; set `PUBLIC_URL`.
+3. Make **one real paid call** on the deployed URL — settling through CDP triggers cataloging.
+4. Verify the listing on `https://agentic.market` (and debug via `/validate`).
+
+**Future — M6: x402r escrow** (https://www.x402r.org/): non-custodial auth-capture escrow +
+refunds so payment is captured only on good delivery and refunded on bad/empty matches. Built on
+the same `@x402/* v2` stack (`@x402r/helpers`: `authCaptureEscrow`, `tokenCollector`) — additive.
+This is the "complete project" end goal.

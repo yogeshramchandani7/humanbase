@@ -7,6 +7,9 @@ import { errorHandler } from "./http";
 import { getProvider } from "./providers/index";
 
 const app = express();
+// Behind Railway/Render/Fly proxies, trust X-Forwarded-* so req.protocol/host
+// (and any request-derived resource URLs) reflect the public HTTPS origin.
+app.set("trust proxy", true);
 app.use(express.json());
 
 // --- Free endpoints (no paywall) ---
